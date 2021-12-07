@@ -1,0 +1,12 @@
+{
+  "name": "sdm630-modbus-tcp",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "author": "Martijn Dierckx",
+  "license": "ISC",
+  "dependencies": {
+    "modbus-stream": "^0.46.0"
+  },
+  "type": "module"
+}

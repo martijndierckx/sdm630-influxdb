@@ -7,10 +7,8 @@ export class ModbusConnection {
   static connect(config) {
     return new Promise((resolve, reject) => {
       modbus.tcp.connect(config.port, config.host, (err, conn) => {
-        // do something with connection
         if (err) {
-          console.log(err);
-          resolve(null);
+          reject(err);
         }
 
         const modbusConn = new ModbusConnection();

@@ -1,14 +1,28 @@
 import { ModbusConnection } from "./ModBusConnection.js";
 
 (async () => {
-  const modbusConn = await ModbusConnection.connect({
+  // Set refresh interval
+  const INTERVAL = process.env.INTERVAL ? parseInt(process.env.INTERVAL) : 1000;
+
+  // Configure connection
+  const connOpts = {
     host: process.env.MODBUS_HOST,
     port: process.env.MODBUS_PORT ? parseInt(process.env.MODBUS_PORT) : 502,
-  });
+  };
+
+  // Connect to modbus
+  let modbusConn;
+  try {
+    modbusConn = await ModbusConnection.connect(connOpts);
+  } catch (e) {
+    console.error(`Couldn't connect to ${connOpts.host}:${connOpts.port}`);
+    console.error(e);
+    process.exit(1);
+  }
 
   // Read registers every second
   setInterval(async () => {
-    if (modbusConn.modbusConn) {
+    if (modbusConn && modbusConn.conn) {
       // Retrieve vals (max 40 per trip = 80 registers)
       const registers = await modbusConn.getRegisterRanges([
         { startParam: 1, quantity: 40 },
@@ -177,5 +191,5 @@ import { ModbusConnection } from "./ModBusConnection.js";
       // Throw error forcing container to restart
       throw Error("Connection closed");
     }
-  }, 1000);
+  }, INTERVAL);
 })();

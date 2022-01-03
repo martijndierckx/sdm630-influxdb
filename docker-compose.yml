@@ -3,11 +3,21 @@ services:
   energy-monitor:
     build: .
     environment:
-    - MODBUS_HOST="192.168.8.187"
+    - MODBUS_HOST=192.168.8.187
     - MODBUS_PORT=502
-    - INFLUX_HOST="192.168.10.191"
+    - INFLUX_HOST=192.168.10.191
     - INFLUX_PORT=8086
-    - INFLUX_DB="energy"
-    #- INFLUX_USER=""
-    #- INFLUX_PASSWORD=""
-    - INTERVAL=1000
+    - INFLUX_DB=home
+    - INFLUX_MEASUREMENT=energy
+    #- INFLUX_INFLUX_METERTAG= # If provided it will be added as 'meter' tag
+    #- INFLUX_USER=
+    #- INFLUX_PASSWORD=
+    #- INFLUX_MAP_FILE=/energymonitor/influx_map.json # If you want to overwrite it, you can provide your own by setting a location via a volume
+    - INTERVAL=1000 # We need 4 round trips to retrieve all modbus registers, so don't shrink the interval too much
+  #volumes:
+  #  - /home/home/energy-monitor/influx_map.json:/energymonitor/influx_map.json
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "50m"

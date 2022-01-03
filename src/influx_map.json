@@ -1,0 +1,153 @@
+{
+  "l1": {
+    "V": "L1_V",
+    "A": "L1_A",
+    "W": "L1_W",
+    "VA": "L1_VA",
+    "VAr": "L1_VAr",
+    "powerFactor": "L1_PowerFactor",
+    "phaseAngle": "L1_PhaseAngle",
+    "total": {
+      "import": {
+        "kWh": "L1_Total_Import_kWh",
+        "kVArh": "L1_Total_Import_kVArh"
+      },
+      "export": {
+        "kWh": "L1_Total_Export_kWh",
+        "kVArh": "L1_Total_Export_kVArh"
+      },
+      "kWh": "L1_Total_kWh",
+      "kVArh": "L1_Total_kVArh"
+    },
+    "demand": {
+      "A": "L1_Demand_A",
+      "maxA": "L1_Demand_MaxA"
+    },
+    "THD": {
+      "V": "L1_THD_V",
+      "A": "L1_THD_A"
+    }
+  },
+  "l2": {
+    "V": "L2_V",
+    "A": "L2_A",
+    "W": "L2_W",
+    "VA": "L2_VA",
+    "VAr": "L2_VAr",
+    "powerFactor": "L2_PowerFactor",
+    "phaseAngle": "L2_PhaseAngle",
+    "total": {
+      "import": {
+        "kWh": "L2_Total_Import_kWh",
+        "kVArh": "L2_Total_Import_kVArh"
+      },
+      "export": {
+        "kWh": "L2_Total_Export_kWh",
+        "kVArh": "L2_Total_Export_kVArh"
+      },
+      "kWh": "L2_Total_kWh",
+      "kVArh": "L2_Total_kVArh"
+    },
+    "demand": {
+      "A": "L2_Demand_A",
+      "maxA": "L2_Demand_MaxA"
+    },
+    "THD": {
+      "V": "L2_THD_V",
+      "A": "L2_THD_A"
+    }
+  },
+  "l3": {
+    "V": "L3_V",
+    "A": "L3_A",
+    "W": "L3_W",
+    "VA": "L3_VA",
+    "VAr": "L3_VAr",
+    "powerFactor": "L3_PowerFactor",
+    "phaseAngle": "L3_PhaseAngle",
+    "total": {
+      "import": {
+        "kWh": "L3_Total_Import_kWh",
+        "kVArh": "L3_Total_Import_kVArh"
+      },
+      "export": {
+        "kWh": "L3_Total_Export_kWh",
+        "kVArh": "L3_Total_Export_kVArh"
+      },
+      "kWh": "L3_Total_kWh",
+      "kVArh": "L3_Total_kVArh"
+    },
+    "demand": {
+      "A": "L3_Demand_A",
+      "maxA": "L3_Demand_MaxA"
+    },
+    "THD": {
+      "V": "L3_THD_V",
+      "A": "L3_THD_A"
+    }
+  },
+  "line2Line": {
+    "l1toL2": {
+      "THD": {
+        "V": "L1_L2_THD_V"
+      }
+    },
+    "l2toL3": {
+      "THD": {
+        "V": "L2_L3_THD_V"
+      }
+    },
+    "l3toL1": {
+      "THD": {
+        "V": "L3_L1_THD_V"
+      }
+    }
+  },
+  "total": {
+    "A": "Total_A",
+    "W": "Total_W",
+    "VA": "Total_VA",
+    "VAr": "Total_VAr",
+    "powerFactor": "Total_PowerFactor",
+    "phaseAngle": "Total_PhaseAngle",
+    "import": {
+      "kWh": "Total_Import_kWh",
+      "kVArh": "Total_Import-KVArh"
+    },
+    "export": {
+      "kWh": "Total_Export_kWh",
+      "kVArh": "Total_Export_kVArh"
+    },
+    "kWh": "Total_kWh",
+    "kVArh": "Total_kVArh",
+    "kVAh": "Total_kVAh",
+    "Ah": "Total_Ah",
+    "demand": {
+      "W": "Total_Demand_W",
+      "maxW": "Total_Demand_MaxW",
+      "VA": "Total_Demand_VA",
+      "maxVA": "Total_Demand_MaxVA"
+    }
+  },
+  "average": {
+    "V": "Average_V",
+    "A": "Average_A",
+    "line2Line": {
+      "V": "Average_L2L_V",
+      "THD": {
+        "V": "Average_L2L_THD_V"
+      }
+    },
+    "THD": {
+      "V": "Average_THD_V"
+    }
+  },
+  "neutral": {
+    "A": "Neutral_A",
+    "demand": {
+      "A": "Neutral_Demand_A",
+      "maxA": "Neutral_Demand_MaxA"
+    }
+  },
+  "frequency": "Frequency"
+}

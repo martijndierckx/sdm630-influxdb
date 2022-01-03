@@ -1,0 +1,13 @@
+version: '3'
+services:
+  energy-monitor:
+    build: .
+    environment:
+    - MODBUS_HOST="192.168.8.187"
+    - MODBUS_PORT=502
+    - INFLUX_HOST="192.168.10.191"
+    - INFLUX_PORT=8086
+    - INFLUX_DB="energy"
+    #- INFLUX_USER=""
+    #- INFLUX_PASSWORD=""
+    - INTERVAL=1000

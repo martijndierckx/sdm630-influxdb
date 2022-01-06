@@ -50,7 +50,7 @@ export class Database {
         {
           measurement: db.measurement,
           fields: influxFieldTypes,
-          tags: db.meterName ? ['meter'] : undefined
+          tags: ['meter']
         }
       ]
     });
@@ -78,7 +78,7 @@ export class Database {
       .writePoints([
         {
           measurement: this.measurement,
-          tags: this.meterName ? { meter: this.meterName } : undefined,
+          tags: { meter: this.meterName },
           fields: keyValues
         }
       ])

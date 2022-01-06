@@ -74,17 +74,13 @@ export class Database {
     combineKeyValues(this.fieldMap, data);
 
     // Write
-    this.conn
-      .writePoints([
-        {
-          measurement: this.measurement,
-          tags: { meter: this.meterName },
-          fields: keyValues
-        }
-      ])
-      .catch((err) => {
-        console.error(`Error saving data to InfluxDB! ${err.stack}`);
-      });
+    this.conn.writePoints([
+      {
+        measurement: this.measurement,
+        tags: { meter: this.meterName },
+        fields: keyValues
+      }
+    ]);
 
     return await this.conn.writePoints([{ fields: data }]);
   }

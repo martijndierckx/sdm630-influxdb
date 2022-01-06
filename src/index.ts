@@ -8,7 +8,7 @@ import type { SDM630Registers } from './SDM630RegistersType';
   const INTERVAL = process.env.INTERVAL ? parseInt(process.env.INTERVAL) : 1000;
 
   // Configure connection
-  const connOpts = {
+  const modbusConnOpts = {
     host: process.env.MODBUS_HOST,
     port: process.env.MODBUS_PORT ? parseInt(process.env.MODBUS_PORT) : 502
   };
@@ -16,26 +16,24 @@ import type { SDM630Registers } from './SDM630RegistersType';
   // Connect to modbus
   let modbusConn: ModbusConnection;
   try {
-    modbusConn = await ModbusConnection.connect(connOpts);
+    modbusConn = await ModbusConnection.connect(modbusConnOpts);
   } catch (e) {
-    console.error(`Couldn't connect to ${connOpts.host}:${connOpts.port}`);
+    console.error(`Couldn't connect to ${modbusConnOpts.host}:${modbusConnOpts.port}`);
     console.error(e);
     process.exit(1);
   }
 
   // Connect to Influx
-  const db = Database.connect(
-    {
-      host: process.env.INFLUX_HOST,
-      port: process.env.INFLUX_PORT ? parseInt(process.env.INFLUX_PORT) : 8086,
-      db: process.env.INFLUX_DB,
-      user: process.env.INFLUX_USER,
-      password: process.env.INFLUX_PASSWORD,
-      measurement: process.env.INFLUX_MEASUREMENT,
-      fieldMap: import(process.env.INFLUX_MAP_FILE ?? './influx_map.json')
-    },
-    process.env.INFLUX_METERTAG
-  );
+  const influxConnOpts = {
+    host: process.env.INFLUX_HOST,
+    port: process.env.INFLUX_PORT ? parseInt(process.env.INFLUX_PORT) : 8086,
+    db: process.env.INFLUX_DB,
+    user: process.env.INFLUX_USER,
+    password: process.env.INFLUX_PASSWORD,
+    measurement: process.env.INFLUX_MEASUREMENT,
+    fieldMap: import(process.env.INFLUX_MAP_FILE ?? './influx_map.json')
+  };
+  const db = Database.connect(influxConnOpts, process.env.INFLUX_METERTAG);
 
   // Read registers every second
   setInterval(async () => {
@@ -205,8 +203,6 @@ import type { SDM630Registers } from './SDM630RegistersType';
           },
           frequency: registers.get16BitFloatVal(36)
         };
-
-        console.log(`Data written`);
       } catch (e) {
         console.error(`Retrieving registers failed:`);
         console.error(e);
@@ -217,15 +213,16 @@ import type { SDM630Registers } from './SDM630RegistersType';
         try {
           await db.write(data);
 
-          console.log(`Data written`);
+          console.log(`Data written to InfluxDB`);
         } catch (e) {
-          console.error(`Writing data to influx failed:`);
+          console.error(`Writing data to InfluxDB (${influxConnOpts.host}:${modbusConnOpts.port}) failed:`);
           console.error(e);
         }
       }
     } else {
       // Throw error & force restart
-      console.error(`No connection anymore with ${connOpts.host}:${connOpts.port}`);
+      console.error(`No connection anymore with ${modbusConnOpts.host}:${modbusConnOpts.port}.`);
+      console.error(`Exiting the app. Make sure the container always restarts by itself.`);
       process.exit(1);
     }
   }, INTERVAL);

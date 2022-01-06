@@ -1,4 +1,4 @@
-import modbus from 'modbus-stream';
+import * as modbus from 'modbus-stream';
 import { ModbusRegisters, Registers } from './ModBusRegisters';
 
 export class ModbusConnection {
@@ -6,7 +6,7 @@ export class ModbusConnection {
 
   public static connect(config: { port: number; host: string }): Promise<ModbusConnection> {
     return new Promise((resolve, reject) => {
-      modbus.tcp.connect(config.port, config.host, null, (err: Error, conn: modbus.TCPStream) => {
+      modbus.tcp.connect(config.port, config.host, undefined, (err: Error, conn: modbus.TCPStream) => {
         if (err) {
           reject(err);
           return;

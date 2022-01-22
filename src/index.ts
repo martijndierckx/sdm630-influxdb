@@ -2,6 +2,7 @@ import 'source-map-support/register';
 import { Database } from './Database';
 import { ModbusConnection } from './ModBusConnection';
 import type { SDM630Registers } from './SDM630RegistersType';
+import fs from 'fs';
 
 (async () => {
   // Set refresh interval
@@ -32,7 +33,7 @@ import type { SDM630Registers } from './SDM630RegistersType';
     user: process.env.INFLUX_USER,
     password: process.env.INFLUX_PASSWORD,
     measurement: process.env.INFLUX_MEASUREMENT,
-    fieldMap: import(process.env.INFLUX_MAP_FILE ?? './influx_map.json')
+    fieldMap: JSON.parse(fs.readFileSync(process.env.INFLUX_MAP_FILE ?? './src/influx_map.json').toString())
   };
   const db = Database.connect(influxConnOpts, process.env.INFLUX_METERTAG);
 

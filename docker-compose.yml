@@ -10,7 +10,7 @@ services:
     - INFLUX_PORT=8086
     - INFLUX_DB=home
     - INFLUX_MEASUREMENT=energy
-    - INFLUX_INFLUX_METERTAG=main
+    - INFLUX_METERTAG=main
     #- INFLUX_USER=
     #- INFLUX_PASSWORD=
     #- INFLUX_MAP_FILE=/energymonitor/influx_map.json # If you want to overwrite it, you can provide your own by setting a location via a volume

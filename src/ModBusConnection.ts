@@ -4,9 +4,9 @@ import { ModbusRegisters, Registers } from './ModBusRegisters';
 export class ModbusConnection {
   public conn: modbus.TCPStream = null;
 
-  public static connect(config: { port: number; host: string }): Promise<ModbusConnection> {
+  public static connect(config: { port: number; host: string; address: number }): Promise<ModbusConnection> {
     return new Promise((resolve, reject) => {
-      modbus.tcp.connect(config.port, config.host, { debug: null }, (err: Error, conn: modbus.TCPStream) => {
+      modbus.tcp.connect(config.port, config.host, { debug: null, unitId: config.address }, (err: Error, conn: modbus.TCPStream) => {
         if (err) {
           reject(err);
           return;
@@ -30,13 +30,13 @@ export class ModbusConnection {
   public async getRegisterRanges(ranges: { startParam: number; quantity: number }[]): Promise<ModbusRegisters> {
     const registers: Registers = {};
     for (const range of ranges) {
-      Object.assign(registers, await this.getgetRegisterRange(range.startParam, range.quantity));
+      Object.assign(registers, await this.getRegisterRange(range.startParam, range.quantity));
     }
 
     return new ModbusRegisters(registers);
   }
 
-  public async getgetRegisterRange(startParam: number, quantity: number): Promise<any> {
+  public async getRegisterRange(startParam: number, quantity: number): Promise<any> {
     return new Promise((resolve, reject) => {
       this.conn.readInputRegisters({ address: (startParam - 1) * 2, quantity: quantity * 2 }, (err, res) => {
         if (err) {

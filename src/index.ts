@@ -10,7 +10,8 @@ import type { SDM630Registers } from './SDM630RegistersType';
   // Configure connection
   const modbusConnOpts = {
     host: process.env.MODBUS_HOST,
-    port: process.env.MODBUS_PORT ? parseInt(process.env.MODBUS_PORT) : 502
+    port: process.env.MODBUS_PORT ? parseInt(process.env.MODBUS_PORT) : 502,
+    address: process.env.MODBUS_ADDRESS ? parseInt(process.env.MODBUS_ADDRESS) : 1
   };
 
   // Connect to modbus

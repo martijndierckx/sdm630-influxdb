@@ -27,11 +27,10 @@ import fs from 'fs';
 
   // Connect to Influx
   const influxConnOpts = {
-    host: process.env.INFLUX_HOST,
-    port: process.env.INFLUX_PORT ? parseInt(process.env.INFLUX_PORT) : 8086,
-    db: process.env.INFLUX_DB,
-    user: process.env.INFLUX_USER,
-    password: process.env.INFLUX_PASSWORD,
+    url: process.env.INFLUX_URL,
+    bucket: process.env.INFLUX_BUCKET,
+    org: process.env.INFLUX_ORG,
+    token: process.env.INFLUX_TOKEN,
     measurement: process.env.INFLUX_MEASUREMENT,
     fieldMap: JSON.parse(fs.readFileSync(process.env.INFLUX_MAP_FILE ?? './src/influx_map.json').toString())
   };
@@ -217,7 +216,7 @@ import fs from 'fs';
 
           console.log(`Data written to InfluxDB`);
         } catch (e) {
-          console.error(`Writing data to InfluxDB (${influxConnOpts.host}:${modbusConnOpts.port}) failed:`);
+          console.error(`Writing data to InfluxDB (${influxConnOpts.url}) failed:`);
           console.error(e);
         }
       }

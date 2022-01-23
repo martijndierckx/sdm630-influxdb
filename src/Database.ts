@@ -67,5 +67,6 @@ export class Database {
 
     // Write
     this.conn.writePoint(point);
+    return await this.conn.flush();
   }
 }

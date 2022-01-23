@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Database = void 0;
-const influx_1 = require("influx");
+const influxdb_client_1 = require("@influxdata/influxdb-client");
 class Database {
     static connect(opts, meterName) {
         const db = new Database();
         db.measurement = opts.measurement;
-        db.meterName = meterName;
         db.fieldMap = opts.fieldMap;
         const influxFieldTypes = {};
         const setInfluxFieldTypes = (keys) => {
@@ -16,53 +15,34 @@ class Database {
                     setInfluxFieldTypes(keyName);
                 }
                 else {
-                    influxFieldTypes[keyName] = influx_1.FieldType.FLOAT;
+                    influxFieldTypes[keyName] = 'float';
                 }
             }
         };
         setInfluxFieldTypes(opts.fieldMap);
-        db.conn = new influx_1.InfluxDB({
-            host: opts.host,
-            port: opts.port ?? 8086,
-            database: opts.db,
-            username: opts.user ?? undefined,
-            password: opts.password ?? undefined,
-            schema: [
-                {
-                    measurement: db.measurement,
-                    fields: influxFieldTypes,
-                    tags: db.meterName ? ['meter'] : undefined
-                }
-            ]
-        });
+        db.conn = new influxdb_client_1.InfluxDB({
+            url: opts.url,
+            token: opts.token
+        }).getWriteApi(opts.org, opts.bucket, 's');
+        db.conn.useDefaultTags({ meter: meterName });
         return db;
     }
     async write(data) {
-        var keyValues = {};
-        const combineKeyValues = (keys, values) => {
+        const point = new influxdb_client_1.Point(this.measurement);
+        const addValues = (keys, values) => {
             for (var key in keys) {
                 var keyName = keys[key];
                 if (typeof keyName === 'object') {
-                    combineKeyValues(keyName, values[key]);
+                    addValues(keyName, values[key]);
                 }
                 else {
-                    keyValues[keyName] = values[key];
+                    point.floatField(keyName, values[key]);
                 }
             }
         };
-        combineKeyValues(this.fieldMap, data);
-        this.conn
-            .writePoints([
-            {
-                measurement: this.measurement,
-                tags: this.meterName ? { meter: this.meterName } : undefined,
-                fields: keyValues
-            }
-        ])
-            .catch((err) => {
-            console.error(`Error saving data to InfluxDB! ${err.stack}`);
-        });
-        return await this.conn.writePoints([{ fields: data }]);
+        addValues(this.fieldMap, data);
+        this.conn.writePoint(point);
+        return await this.conn.flush();
     }
 }
 exports.Database = Database;

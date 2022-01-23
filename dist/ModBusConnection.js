@@ -10,7 +10,7 @@ class ModbusConnection {
     }
     static connect(config) {
         return new Promise((resolve, reject) => {
-            modbus.tcp.connect(config.port, config.host, undefined, (err, conn) => {
+            modbus.tcp.connect(config.port, config.host, { debug: null, unitId: config.address }, (err, conn) => {
                 if (err) {
                     reject(err);
                     return;
@@ -27,11 +27,11 @@ class ModbusConnection {
     async getRegisterRanges(ranges) {
         const registers = {};
         for (const range of ranges) {
-            Object.assign(registers, await this.getgetRegisterRange(range.startParam, range.quantity));
+            Object.assign(registers, await this.getRegisterRange(range.startParam, range.quantity));
         }
         return new ModBusRegisters_1.ModbusRegisters(registers);
     }
-    async getgetRegisterRange(startParam, quantity) {
+    async getRegisterRange(startParam, quantity) {
         return new Promise((resolve, reject) => {
             this.conn.readInputRegisters({ address: (startParam - 1) * 2, quantity: quantity * 2 }, (err, res) => {
                 if (err) {

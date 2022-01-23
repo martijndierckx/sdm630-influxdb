@@ -1,51 +1,35 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
 require("source-map-support/register");
 const Database_1 = require("./Database");
 const ModBusConnection_1 = require("./ModBusConnection");
+const fs_1 = (0, tslib_1.__importDefault)(require("fs"));
 (async () => {
     const INTERVAL = process.env.INTERVAL ? parseInt(process.env.INTERVAL) : 1000;
-    const connOpts = {
+    const modbusConnOpts = {
         host: process.env.MODBUS_HOST,
-        port: process.env.MODBUS_PORT ? parseInt(process.env.MODBUS_PORT) : 502
+        port: process.env.MODBUS_PORT ? parseInt(process.env.MODBUS_PORT) : 502,
+        address: process.env.MODBUS_ADDRESS ? parseInt(process.env.MODBUS_ADDRESS) : 1
     };
     let modbusConn;
     try {
-        modbusConn = await ModBusConnection_1.ModbusConnection.connect(connOpts);
+        modbusConn = await ModBusConnection_1.ModbusConnection.connect(modbusConnOpts);
     }
     catch (e) {
-        console.error(`Couldn't connect to ${connOpts.host}:${connOpts.port}`);
+        console.error(`Couldn't connect to ${modbusConnOpts.host}:${modbusConnOpts.port}`);
         console.error(e);
         process.exit(1);
     }
-    const db = Database_1.Database.connect({
-        host: process.env.INFLUX_HOST,
-        port: process.env.INFLUX_PORT ? parseInt(process.env.INFLUX_PORT) : 8086,
-        db: process.env.INFLUX_DB,
-        user: process.env.INFLUX_USER,
-        password: process.env.INFLUX_PASSWORD,
+    const influxConnOpts = {
+        url: process.env.INFLUX_URL,
+        bucket: process.env.INFLUX_BUCKET,
+        org: process.env.INFLUX_ORG,
+        token: process.env.INFLUX_TOKEN,
         measurement: process.env.INFLUX_MEASUREMENT,
-        fieldMap: Promise.resolve().then(() => __importStar(require(process.env.INFLUX_MAP_FILE ?? './influx_map.json')))
-    }, process.env.INFLUX_METERTAG);
+        fieldMap: JSON.parse(fs_1.default.readFileSync(process.env.INFLUX_MAP_FILE ?? './src/influx_map.json').toString())
+    };
+    const db = Database_1.Database.connect(influxConnOpts, process.env.INFLUX_METERTAG);
     setInterval(async () => {
         if (modbusConn && modbusConn.conn) {
             let data;
@@ -209,7 +193,6 @@ const ModBusConnection_1 = require("./ModBusConnection");
                     },
                     frequency: registers.get16BitFloatVal(36)
                 };
-                console.log(`Data written`);
             }
             catch (e) {
                 console.error(`Retrieving registers failed:`);
@@ -218,16 +201,17 @@ const ModBusConnection_1 = require("./ModBusConnection");
             if (data) {
                 try {
                     await db.write(data);
-                    console.log(`Data written`);
+                    console.log(`Data written to InfluxDB`);
                 }
                 catch (e) {
-                    console.error(`Writing data to influx failed:`);
+                    console.error(`Writing data to InfluxDB (${influxConnOpts.url}) failed:`);
                     console.error(e);
                 }
             }
         }
         else {
-            console.error(`No connection anymore with ${connOpts.host}:${connOpts.port}`);
+            console.error(`No connection anymore with ${modbusConnOpts.host}:${modbusConnOpts.port}.`);
+            console.error(`Exiting the app. Make sure the container always restarts by itself.`);
             process.exit(1);
         }
     }, INTERVAL);

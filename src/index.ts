@@ -207,6 +207,7 @@ import fs from 'fs';
       } catch (e) {
         console.error(`Retrieving registers failed:`);
         console.error(e);
+        process.exit(1); // Force quit / restart
       }
 
       // Write data
@@ -218,13 +219,13 @@ import fs from 'fs';
         } catch (e) {
           console.error(`Writing data to InfluxDB (${influxConnOpts.url}) failed:`);
           console.error(e);
+          process.exit(1); // Force quit / restart
         }
       }
     } else {
-      // Throw error & force restart
       console.error(`No connection anymore with ${modbusConnOpts.host}:${modbusConnOpts.port}.`);
       console.error(`Exiting the app. Make sure the container always restarts by itself.`);
-      process.exit(1);
+      process.exit(1); // Force quit / restart
     }
   }, INTERVAL);
 })();

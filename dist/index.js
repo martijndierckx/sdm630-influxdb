@@ -197,6 +197,7 @@ const fs_1 = (0, tslib_1.__importDefault)(require("fs"));
             catch (e) {
                 console.error(`Retrieving registers failed:`);
                 console.error(e);
+                process.exit(1);
             }
             if (data) {
                 try {
@@ -206,6 +207,7 @@ const fs_1 = (0, tslib_1.__importDefault)(require("fs"));
                 catch (e) {
                     console.error(`Writing data to InfluxDB (${influxConnOpts.url}) failed:`);
                     console.error(e);
+                    process.exit(1);
                 }
             }
         }

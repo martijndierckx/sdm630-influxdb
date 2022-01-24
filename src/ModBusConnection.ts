@@ -1,30 +1,45 @@
-import * as modbus from 'modbus-stream';
 import { ModbusRegisters, Registers } from './ModBusRegisters';
+import * as Modbus from 'jsmodbus';
+import { Socket } from 'net';
 
 export class ModbusConnection {
-  public conn: modbus.TCPStream = null;
+  private socket: Socket;
+  private conn: Modbus.ModbusTCPClient = null;
 
-  public static connect(config: { port: number; host: string; address: number }): Promise<ModbusConnection> {
-    return new Promise((resolve, reject) => {
-      modbus.tcp.connect(config.port, config.host, { debug: null, unitId: config.address }, (err: Error, conn: modbus.TCPStream) => {
-        if (err) {
-          reject(err);
-          return;
-        }
+  public static async connect(config: { port: number; host: string; slaveId: number }): Promise<ModbusConnection> {
+    return new Promise((resolve) => {
+      const modbusConn = new ModbusConnection();
+      modbusConn.socket = new Socket();
+      modbusConn.conn = new Modbus.client.TCP(modbusConn.socket, config.slaveId, 3000);
 
-        // Create connection object
-        const modbusConn = new ModbusConnection();
-        modbusConn.conn = conn;
-
-        // Remove connection object on disconnect
-        conn.on('close', () => {
-          modbusConn.conn = null;
-        });
-
-        // Return connection object
+      // Events
+      modbusConn.socket.on('connect', () => {
         resolve(modbusConn);
       });
+      modbusConn.socket.on('end', () => {
+        modbusConn.conn = null;
+        // TODO reconnect on request?
+      });
+
+      modbusConn.socket.connect(config);
     });
+  }
+
+  public async disconnect() {
+    this.socket.end(() => {
+      return;
+    });
+  }
+
+  public get isConnected(): boolean {
+    return this.conn !== null;
+  }
+
+  public async getRegister(address: number): Promise<number> {
+    const register = await this.getRegisterRange(address, 1);
+
+    if (register == null) return null;
+    return register[address];
   }
 
   public async getRegisterRanges(ranges: { startParam: number; quantity: number }[]): Promise<ModbusRegisters> {
@@ -36,23 +51,30 @@ export class ModbusConnection {
     return new ModbusRegisters(registers);
   }
 
-  public async getRegisterRange(startParam: number, quantity: number): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.conn.readInputRegisters({ address: (startParam - 1) * 2, quantity: quantity * 2 }, (err, res) => {
-        if (err) {
-          reject(err);
-          return;
-        }
+  public async getRegisterRange(startParam: number, quantity: number): Promise<{ [address: number]: number }> {
+    let res;
+    try {
+      res = await this.conn.readInputRegisters((startParam - 1) * 2, quantity * 2);
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
 
-        // Convert to correctly addressed object
-        const data = {};
-        for (const [i, val] of res.response.data.entries()) {
-          data[(startParam - 1) * 2 + i] = val;
-        }
+    // Was data returned?
+    if (res.response && res.response.body && !res.response.body.isException && res.response.body.byteCount > 0) {
+      // Convert to correctly addressed object
+      const data = {};
+      for (const [i, val] of res.response.body.values.entries()) {
+        let buf = Buffer.allocUnsafe(2);
+        buf.writeUInt16BE(val);
+        data[(startParam - 1) * 2 + i] = buf;
+      }
 
-        // Return data
-        resolve(data);
-      });
-    });
+      // Return data
+      return data;
+    }
+
+    // Nothing returned
+    throw Error(`Failed retrieving register range ${startParam} + ${(startParam - 1) * 2 + quantity}`);
   }
 }

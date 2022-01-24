@@ -10,7 +10,7 @@ const fs_1 = (0, tslib_1.__importDefault)(require("fs"));
     const modbusConnOpts = {
         host: process.env.MODBUS_HOST,
         port: process.env.MODBUS_PORT ? parseInt(process.env.MODBUS_PORT) : 502,
-        address: process.env.MODBUS_ADDRESS ? parseInt(process.env.MODBUS_ADDRESS) : 1
+        slaveId: process.env.MODBUS_ADDRESS ? parseInt(process.env.MODBUS_ADDRESS) : 1
     };
     let modbusConn;
     try {
@@ -31,7 +31,7 @@ const fs_1 = (0, tslib_1.__importDefault)(require("fs"));
     };
     const db = Database_1.Database.connect(influxConnOpts, process.env.INFLUX_METERTAG);
     setInterval(async () => {
-        if (modbusConn && modbusConn.conn) {
+        if (modbusConn && modbusConn.isConnected) {
             let data;
             try {
                 const registers = await modbusConn.getRegisterRanges([

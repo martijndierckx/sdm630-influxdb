@@ -12,7 +12,7 @@ import fs from 'fs';
   const modbusConnOpts = {
     host: process.env.MODBUS_HOST,
     port: process.env.MODBUS_PORT ? parseInt(process.env.MODBUS_PORT) : 502,
-    address: process.env.MODBUS_ADDRESS ? parseInt(process.env.MODBUS_ADDRESS) : 1
+    slaveId: process.env.MODBUS_ADDRESS ? parseInt(process.env.MODBUS_ADDRESS) : 1
   };
 
   // Connect to modbus
@@ -38,7 +38,7 @@ import fs from 'fs';
 
   // Read registers every second
   setInterval(async () => {
-    if (modbusConn && modbusConn.conn) {
+    if (modbusConn && modbusConn.isConnected) {
       // Get data
       let data: SDM630Registers;
       try {

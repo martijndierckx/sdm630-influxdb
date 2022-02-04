@@ -6,14 +6,17 @@ class ModbusRegisters {
         this.registers = null;
         this.registers = registers;
     }
-    get16BitFloatVal(param) {
+    get32BitFloatVal(param) {
+        const address = (param - 1) * 2;
         try {
-            const address = (param - 1) * 2;
             const buffer = Buffer.concat([this.registers[address], this.registers[address + 1]]);
             return +buffer.readFloatBE().toFixed(3);
         }
-        catch (e) { }
-        return 0;
+        catch (e) {
+            console.error(`Couldn't parse 32 bit float value from 2 registers: ${address} & ${address + 1}`);
+            console.error(e);
+        }
+        return null;
     }
 }
 exports.ModbusRegisters = ModbusRegisters;

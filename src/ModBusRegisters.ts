@@ -9,12 +9,15 @@ export class ModbusRegisters {
     this.registers = registers;
   }
 
-  public get16BitFloatVal(param: number) {
+  public get32BitFloatVal(param: number): number {
+    const address = (param - 1) * 2;
     try {
-      const address = (param - 1) * 2;
       const buffer = Buffer.concat([this.registers[address], this.registers[address + 1]]);
       return +buffer.readFloatBE().toFixed(3);
-    } catch (e) {}
-    return 0;
+    } catch (e) {
+      console.error(`Couldn't parse 32 bit float value from 2 registers: ${address} & ${address + 1}`);
+      console.error(e);
+    }
+    return null;
   }
 }

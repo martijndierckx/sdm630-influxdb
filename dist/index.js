@@ -42,156 +42,156 @@ const fs_1 = (0, tslib_1.__importDefault)(require("fs"));
                 ]);
                 data = {
                     l1: {
-                        V: registers.get16BitFloatVal(1),
-                        A: registers.get16BitFloatVal(4),
-                        W: registers.get16BitFloatVal(7),
-                        VA: registers.get16BitFloatVal(10),
-                        VAr: registers.get16BitFloatVal(13),
-                        powerFactor: registers.get16BitFloatVal(16),
-                        phaseAngle: registers.get16BitFloatVal(19),
+                        V: registers.get32BitFloatVal(1),
+                        A: registers.get32BitFloatVal(4),
+                        W: registers.get32BitFloatVal(7),
+                        VA: registers.get32BitFloatVal(10),
+                        VAr: registers.get32BitFloatVal(13),
+                        powerFactor: registers.get32BitFloatVal(16),
+                        phaseAngle: registers.get32BitFloatVal(19),
                         total: {
                             import: {
-                                kWh: registers.get16BitFloatVal(174),
-                                kVArh: registers.get16BitFloatVal(183)
+                                kWh: registers.get32BitFloatVal(174),
+                                kVArh: registers.get32BitFloatVal(183)
                             },
                             export: {
-                                kWh: registers.get16BitFloatVal(177),
-                                kVArh: registers.get16BitFloatVal(186)
+                                kWh: registers.get32BitFloatVal(177),
+                                kVArh: registers.get32BitFloatVal(186)
                             },
-                            kWh: registers.get16BitFloatVal(180),
-                            kVArh: registers.get16BitFloatVal(189)
+                            kWh: registers.get32BitFloatVal(180),
+                            kVArh: registers.get32BitFloatVal(189)
                         },
                         demand: {
-                            A: registers.get16BitFloatVal(130),
-                            maxA: registers.get16BitFloatVal(133)
+                            A: registers.get32BitFloatVal(130),
+                            maxA: registers.get32BitFloatVal(133)
                         },
                         THD: {
-                            V: registers.get16BitFloatVal(118),
-                            A: registers.get16BitFloatVal(121)
+                            V: registers.get32BitFloatVal(118),
+                            A: registers.get32BitFloatVal(121)
                         }
                     },
                     l2: {
-                        V: registers.get16BitFloatVal(2),
-                        A: registers.get16BitFloatVal(5),
-                        W: registers.get16BitFloatVal(8),
-                        VA: registers.get16BitFloatVal(11),
-                        VAr: registers.get16BitFloatVal(14),
-                        powerFactor: registers.get16BitFloatVal(17),
-                        phaseAngle: registers.get16BitFloatVal(20),
+                        V: registers.get32BitFloatVal(2),
+                        A: registers.get32BitFloatVal(5),
+                        W: registers.get32BitFloatVal(8),
+                        VA: registers.get32BitFloatVal(11),
+                        VAr: registers.get32BitFloatVal(14),
+                        powerFactor: registers.get32BitFloatVal(17),
+                        phaseAngle: registers.get32BitFloatVal(20),
                         total: {
                             import: {
-                                kWh: registers.get16BitFloatVal(175),
-                                kVArh: registers.get16BitFloatVal(184)
+                                kWh: registers.get32BitFloatVal(175),
+                                kVArh: registers.get32BitFloatVal(184)
                             },
                             export: {
-                                kWh: registers.get16BitFloatVal(178),
-                                kVArh: registers.get16BitFloatVal(187)
+                                kWh: registers.get32BitFloatVal(178),
+                                kVArh: registers.get32BitFloatVal(187)
                             },
-                            kWh: registers.get16BitFloatVal(181),
-                            kVArh: registers.get16BitFloatVal(190)
+                            kWh: registers.get32BitFloatVal(181),
+                            kVArh: registers.get32BitFloatVal(190)
                         },
                         demand: {
-                            A: registers.get16BitFloatVal(131),
-                            maxA: registers.get16BitFloatVal(134)
+                            A: registers.get32BitFloatVal(131),
+                            maxA: registers.get32BitFloatVal(134)
                         },
                         THD: {
-                            V: registers.get16BitFloatVal(119),
-                            A: registers.get16BitFloatVal(122)
+                            V: registers.get32BitFloatVal(119),
+                            A: registers.get32BitFloatVal(122)
                         }
                     },
                     l3: {
-                        V: registers.get16BitFloatVal(3),
-                        A: registers.get16BitFloatVal(6),
-                        W: registers.get16BitFloatVal(9),
-                        VA: registers.get16BitFloatVal(12),
-                        VAr: registers.get16BitFloatVal(15),
-                        powerFactor: registers.get16BitFloatVal(18),
-                        phaseAngle: registers.get16BitFloatVal(21),
+                        V: registers.get32BitFloatVal(3),
+                        A: registers.get32BitFloatVal(6),
+                        W: registers.get32BitFloatVal(9),
+                        VA: registers.get32BitFloatVal(12),
+                        VAr: registers.get32BitFloatVal(15),
+                        powerFactor: registers.get32BitFloatVal(18),
+                        phaseAngle: registers.get32BitFloatVal(21),
                         total: {
                             import: {
-                                kWh: registers.get16BitFloatVal(176),
-                                kVArh: registers.get16BitFloatVal(185)
+                                kWh: registers.get32BitFloatVal(176),
+                                kVArh: registers.get32BitFloatVal(185)
                             },
                             export: {
-                                kWh: registers.get16BitFloatVal(179),
-                                kVArh: registers.get16BitFloatVal(188)
+                                kWh: registers.get32BitFloatVal(179),
+                                kVArh: registers.get32BitFloatVal(188)
                             },
-                            kWh: registers.get16BitFloatVal(182),
-                            kVArh: registers.get16BitFloatVal(191)
+                            kWh: registers.get32BitFloatVal(182),
+                            kVArh: registers.get32BitFloatVal(191)
                         },
                         demand: {
-                            A: registers.get16BitFloatVal(132),
-                            maxA: registers.get16BitFloatVal(135)
+                            A: registers.get32BitFloatVal(132),
+                            maxA: registers.get32BitFloatVal(135)
                         },
                         THD: {
-                            V: registers.get16BitFloatVal(120),
-                            A: registers.get16BitFloatVal(123)
+                            V: registers.get32BitFloatVal(120),
+                            A: registers.get32BitFloatVal(123)
                         }
                     },
                     line2Line: {
                         l1toL2: {
                             THD: {
-                                V: registers.get16BitFloatVal(168)
+                                V: registers.get32BitFloatVal(168)
                             }
                         },
                         l2toL3: {
                             THD: {
-                                V: registers.get16BitFloatVal(169)
+                                V: registers.get32BitFloatVal(169)
                             }
                         },
                         l3toL1: {
                             THD: {
-                                V: registers.get16BitFloatVal(170)
+                                V: registers.get32BitFloatVal(170)
                             }
                         }
                     },
                     total: {
-                        A: registers.get16BitFloatVal(25),
-                        W: registers.get16BitFloatVal(27),
-                        VA: registers.get16BitFloatVal(29),
-                        VAr: registers.get16BitFloatVal(31),
-                        powerFactor: registers.get16BitFloatVal(32),
-                        phaseAngle: registers.get16BitFloatVal(34),
+                        A: registers.get32BitFloatVal(25),
+                        W: registers.get32BitFloatVal(27),
+                        VA: registers.get32BitFloatVal(29),
+                        VAr: registers.get32BitFloatVal(31),
+                        powerFactor: registers.get32BitFloatVal(32),
+                        phaseAngle: registers.get32BitFloatVal(34),
                         import: {
-                            kWh: registers.get16BitFloatVal(37),
-                            kVArh: registers.get16BitFloatVal(39)
+                            kWh: registers.get32BitFloatVal(37),
+                            kVArh: registers.get32BitFloatVal(39)
                         },
                         export: {
-                            kWh: registers.get16BitFloatVal(38),
-                            kVArh: registers.get16BitFloatVal(40)
+                            kWh: registers.get32BitFloatVal(38),
+                            kVArh: registers.get32BitFloatVal(40)
                         },
-                        kWh: registers.get16BitFloatVal(172),
-                        kVArh: registers.get16BitFloatVal(173),
-                        kVAh: registers.get16BitFloatVal(41),
-                        Ah: registers.get16BitFloatVal(42),
+                        kWh: registers.get32BitFloatVal(172),
+                        kVArh: registers.get32BitFloatVal(173),
+                        kVAh: registers.get32BitFloatVal(41),
+                        Ah: registers.get32BitFloatVal(42),
                         demand: {
-                            W: registers.get16BitFloatVal(43),
-                            maxW: registers.get16BitFloatVal(44),
-                            VA: registers.get16BitFloatVal(51),
-                            maxVA: registers.get16BitFloatVal(52)
+                            W: registers.get32BitFloatVal(43),
+                            maxW: registers.get32BitFloatVal(44),
+                            VA: registers.get32BitFloatVal(51),
+                            maxVA: registers.get32BitFloatVal(52)
                         }
                     },
                     average: {
-                        V: registers.get16BitFloatVal(22),
-                        A: registers.get16BitFloatVal(24),
+                        V: registers.get32BitFloatVal(22),
+                        A: registers.get32BitFloatVal(24),
                         line2Line: {
-                            V: registers.get16BitFloatVal(104),
+                            V: registers.get32BitFloatVal(104),
                             THD: {
-                                V: registers.get16BitFloatVal(171)
+                                V: registers.get32BitFloatVal(171)
                             }
                         },
                         THD: {
-                            V: registers.get16BitFloatVal(125)
+                            V: registers.get32BitFloatVal(125)
                         }
                     },
                     neutral: {
-                        A: registers.get16BitFloatVal(113),
+                        A: registers.get32BitFloatVal(113),
                         demand: {
-                            A: registers.get16BitFloatVal(53),
-                            maxA: registers.get16BitFloatVal(54)
+                            A: registers.get32BitFloatVal(53),
+                            maxA: registers.get32BitFloatVal(54)
                         }
                     },
-                    frequency: registers.get16BitFloatVal(36)
+                    frequency: registers.get32BitFloatVal(36)
                 };
             }
             catch (e) {

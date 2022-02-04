@@ -13,7 +13,7 @@ class ModbusRegisters {
             return +buffer.readFloatBE().toFixed(3);
         }
         catch (e) {
-            console.error(`Couldn't parse 32 bit float value from 2 registers: ${address} & ${address + 1}`);
+            console.error(`Couldn't parse 32 bit float param '${param}' value from 2 registers: ${address} & ${address + 1}`);
             console.error(e);
         }
         return null;

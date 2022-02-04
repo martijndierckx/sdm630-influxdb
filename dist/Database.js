@@ -36,7 +36,8 @@ class Database {
                     addValues(keyName, values[key]);
                 }
                 else {
-                    point.floatField(keyName, values[key]);
+                    if (values[key] !== null)
+                        point.floatField(keyName, values[key]);
                 }
             }
         };

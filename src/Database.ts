@@ -59,7 +59,7 @@ export class Database {
         if (typeof keyName === 'object') {
           addValues(keyName, values[key]);
         } else {
-          point.floatField(keyName, values[key]);
+          if (values[key] !== null) point.floatField(keyName, values[key]);
         }
       }
     };

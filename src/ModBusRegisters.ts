@@ -15,7 +15,7 @@ export class ModbusRegisters {
       const buffer = Buffer.concat([this.registers[address], this.registers[address + 1]]);
       return +buffer.readFloatBE().toFixed(3);
     } catch (e) {
-      console.error(`Couldn't parse 32 bit float value from 2 registers: ${address} & ${address + 1}`);
+      console.error(`Couldn't parse 32 bit float param '${param}' value from 2 registers: ${address} & ${address + 1}`);
       console.error(e);
     }
     return null;

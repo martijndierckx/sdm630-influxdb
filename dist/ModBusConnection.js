@@ -47,7 +47,7 @@ class ModbusConnection {
     async getRegisterRange(startParam, quantity) {
         let res;
         try {
-            res = await this.conn.readInputRegisters((startParam - 1) * 2, quantity * 2);
+            res = await this.conn.readInputRegisters((startParam - 1) * 2, (quantity + 1) * 2);
         }
         catch (e) {
             console.log(e);

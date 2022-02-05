@@ -1,5 +1,5 @@
 {
-  "name": "sdm630-modbus-tcp-influx",
+  "name": "sdm630-influx",
   "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",

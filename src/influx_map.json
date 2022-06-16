@@ -112,10 +112,12 @@
     "phaseAngle": "Total_PhaseAngle",
     "import": {
       "kWh": "Total_Import_kWh",
-      "kVArh": "Total_Import-KVArh"
+      "balancedKwh": "Total_Import_BalancedKwh",
+      "kVArh": "Total_Import_KVArh"
     },
     "export": {
       "kWh": "Total_Export_kWh",
+      "balancedKwh": "Total_Export_BalancedKwh",
       "kVArh": "Total_Export_kVArh"
     },
     "kWh": "Total_kWh",

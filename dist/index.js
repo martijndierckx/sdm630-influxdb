@@ -4,7 +4,8 @@ const tslib_1 = require("tslib");
 require("source-map-support/register");
 const Database_1 = require("./Database");
 const ModBusConnection_1 = require("./ModBusConnection");
-const fs_1 = (0, tslib_1.__importDefault)(require("fs"));
+const path_1 = (0, tslib_1.__importDefault)(require("path"));
+const promises_1 = (0, tslib_1.__importDefault)(require("fs/promises"));
 const express_1 = (0, tslib_1.__importDefault)(require("express"));
 (async () => {
     let data;
@@ -24,6 +25,22 @@ const express_1 = (0, tslib_1.__importDefault)(require("express"));
             console.log(`HTTP listening on port ${HTTP_PORT}`);
         });
     }
+    const BALANCED_KWH_TOTALS_FILE = path_1.default.normalize(process.env.BALANCED_KWH_TOTALS_FILE ?? '/energymonitor/balancedKwhTotals.json');
+    const balancedKwhTotals = {
+        import: 0,
+        export: 0
+    };
+    try {
+        const fileContents = await promises_1.default.readFile(BALANCED_KWH_TOTALS_FILE, 'utf-8');
+        const json = JSON.parse(fileContents);
+        balancedKwhTotals.import = json.import;
+        balancedKwhTotals.export = json.export;
+    }
+    catch (e) { }
+    setInterval(async () => {
+        await promises_1.default.writeFile(BALANCED_KWH_TOTALS_FILE, JSON.stringify(balancedKwhTotals));
+        console.log(`Saved Balanced Kwh Totals`);
+    }, 60000);
     let modbusConn;
     try {
         modbusConn = await ModBusConnection_1.ModbusConnection.connect(modbusConnOpts);
@@ -33,13 +50,14 @@ const express_1 = (0, tslib_1.__importDefault)(require("express"));
         console.error(e);
         process.exit(1);
     }
+    const INFLUX_MAP_FILE = path_1.default.normalize(process.env.INFLUX_MAP_FILE ?? './src/influx_map.json');
     const influxConnOpts = {
         url: process.env.INFLUX_URL,
         bucket: process.env.INFLUX_BUCKET,
         org: process.env.INFLUX_ORG,
         token: process.env.INFLUX_TOKEN,
         measurement: process.env.INFLUX_MEASUREMENT,
-        fieldMap: JSON.parse(fs_1.default.readFileSync(process.env.INFLUX_MAP_FILE ?? './src/influx_map.json').toString())
+        fieldMap: JSON.parse((await promises_1.default.readFile(INFLUX_MAP_FILE, 'utf-8')).toString())
     };
     const db = Database_1.Database.connect(influxConnOpts, process.env.INFLUX_METERTAG);
     setInterval(async () => {
@@ -204,6 +222,15 @@ const express_1 = (0, tslib_1.__importDefault)(require("express"));
                     },
                     frequency: registers.get32BitFloatVal(36)
                 };
+                const balancedKwh = data.total.W / 1000 / (3600000 / INTERVAL);
+                if (balancedKwh >= 0) {
+                    balancedKwhTotals.import += balancedKwh;
+                }
+                else {
+                    balancedKwhTotals.export += Math.abs(balancedKwh);
+                }
+                data.total.import.balancedKwh = balancedKwhTotals.import;
+                data.total.export.balancedKwh = balancedKwhTotals.export;
             }
             catch (e) {
                 console.error(`Retrieving registers failed:`);

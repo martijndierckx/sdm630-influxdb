@@ -112,10 +112,12 @@ export type SDM630Registers = {
     phaseAngle: number;
     import: {
       kWh: number;
+      balancedKwh?: number;
       kVArh: number;
     };
     export: {
       kWh: number;
+      balancedKwh?: number;
       kVArh: number;
     };
     kWh: number;

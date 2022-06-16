@@ -2,7 +2,8 @@ import 'source-map-support/register';
 import { Database } from './Database';
 import { ModbusConnection } from './ModBusConnection';
 import type { SDM630Registers } from './SDM630RegistersType';
-import fs from 'fs';
+import path from 'path';
+import fs from 'fs/promises';
 import Express from 'express';
 
 (async () => {
@@ -32,6 +33,28 @@ import Express from 'express';
     });
   }
 
+  // Read Balanced kWh Totals
+  const BALANCED_KWH_TOTALS_FILE = path.normalize(process.env.BALANCED_KWH_TOTALS_FILE ?? '/energymonitor/balancedKwhTotals.json');
+  const balancedKwhTotals = {
+    import: 0,
+    export: 0
+  };
+  try {
+    // Read file
+    const fileContents = await fs.readFile(BALANCED_KWH_TOTALS_FILE, 'utf-8');
+    const json = JSON.parse(fileContents);
+
+    // Extract data
+    balancedKwhTotals.import = json.import;
+    balancedKwhTotals.export = json.export;
+  } catch (e) {}
+
+  // Write Balanced kWh Totals every minute
+  setInterval(async () => {
+    await fs.writeFile(BALANCED_KWH_TOTALS_FILE, JSON.stringify(balancedKwhTotals));
+    console.log(`Saved Balanced Kwh Totals`);
+  }, 60000);
+
   // Connect to modbus
   let modbusConn: ModbusConnection;
   try {
@@ -43,13 +66,14 @@ import Express from 'express';
   }
 
   // Connect to Influx
+  const INFLUX_MAP_FILE = path.normalize(process.env.INFLUX_MAP_FILE ?? './src/influx_map.json');
   const influxConnOpts = {
     url: process.env.INFLUX_URL,
     bucket: process.env.INFLUX_BUCKET,
     org: process.env.INFLUX_ORG,
     token: process.env.INFLUX_TOKEN,
     measurement: process.env.INFLUX_MEASUREMENT,
-    fieldMap: JSON.parse(fs.readFileSync(process.env.INFLUX_MAP_FILE ?? './src/influx_map.json').toString())
+    fieldMap: JSON.parse((await fs.readFile(INFLUX_MAP_FILE, 'utf-8')).toString())
   };
   const db = Database.connect(influxConnOpts, process.env.INFLUX_METERTAG);
 
@@ -220,6 +244,17 @@ import Express from 'express';
           },
           frequency: registers.get32BitFloatVal(36)
         };
+
+        // Calculate Balanced Total Kwh (Belgian meter calc)
+        const balancedKwh = data.total.W / 1000 / (3600000 / INTERVAL);
+        if (balancedKwh >= 0) {
+          balancedKwhTotals.import += balancedKwh;
+        } else {
+          balancedKwhTotals.export += Math.abs(balancedKwh);
+        }
+        // Add tot data list
+        data.total.import.balancedKwh = balancedKwhTotals.import;
+        data.total.export.balancedKwh = balancedKwhTotals.export;
       } catch (e) {
         console.error(`Retrieving registers failed:`);
         console.error(e);

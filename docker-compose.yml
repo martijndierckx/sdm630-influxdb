@@ -13,6 +13,7 @@ services:
     - INFLUX_TOKEN=
     - INFLUX_MEASUREMENT=energy
     - INFLUX_METERTAG=main
+    #- BALANCED_KWH_TOTALS_FILE=/energymonitor/balancedKwhTotals.json # Location of the file where the balanced total kwh is saved
     #- HTTP_PORT=80 # if you want to expose the read values via HTTP as well, you can enter a port number
     #- INFLUX_MAP_FILE=/energymonitor/influx_map.json # If you want to overwrite it, you can provide your own by setting a location via a volume
     - INTERVAL=1000 # We need 4 round trips to retrieve all modbus registers, so don't shrink the interval too much
@@ -20,6 +21,7 @@ services:
     #- "80:80"
   #volumes:
   #  - /home/home/energy-monitor/influx_map.json:/energymonitor/influx_map.json
+  #  - /home/home/energymonitor/balancedKwhTotals.json:/energymonitor/balancedKwhTotals.json
     logging:
       driver: "json-file"
       options:

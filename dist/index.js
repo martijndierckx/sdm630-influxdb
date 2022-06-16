@@ -5,13 +5,25 @@ require("source-map-support/register");
 const Database_1 = require("./Database");
 const ModBusConnection_1 = require("./ModBusConnection");
 const fs_1 = (0, tslib_1.__importDefault)(require("fs"));
+const express_1 = (0, tslib_1.__importDefault)(require("express"));
 (async () => {
+    let data;
     const INTERVAL = process.env.INTERVAL ? parseInt(process.env.INTERVAL) : 1000;
     const modbusConnOpts = {
         host: process.env.MODBUS_HOST,
         port: process.env.MODBUS_PORT ? parseInt(process.env.MODBUS_PORT) : 502,
         slaveId: process.env.MODBUS_ADDRESS ? parseInt(process.env.MODBUS_ADDRESS) : 1
     };
+    if (process.env.HTTP_PORT) {
+        const HTTP_PORT = parseInt(process.env.HTTP_PORT);
+        const express = (0, express_1.default)();
+        express.get('/data', (_req, res) => {
+            res.send(data);
+        });
+        express.listen(HTTP_PORT, () => {
+            console.log(`HTTP listening on port ${HTTP_PORT}`);
+        });
+    }
     let modbusConn;
     try {
         modbusConn = await ModBusConnection_1.ModbusConnection.connect(modbusConnOpts);
@@ -32,7 +44,6 @@ const fs_1 = (0, tslib_1.__importDefault)(require("fs"));
     const db = Database_1.Database.connect(influxConnOpts, process.env.INFLUX_METERTAG);
     setInterval(async () => {
         if (modbusConn && modbusConn.isConnected) {
-            let data;
             try {
                 const registers = await modbusConn.getRegisterRanges([
                     { startParam: 1, quantity: 40 },

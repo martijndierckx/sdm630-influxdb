@@ -3,8 +3,11 @@ import { Database } from './Database';
 import { ModbusConnection } from './ModBusConnection';
 import type { SDM630Registers } from './SDM630RegistersType';
 import fs from 'fs';
+import Express from 'express';
 
 (async () => {
+  let data: SDM630Registers;
+
   // Set refresh interval
   const INTERVAL = process.env.INTERVAL ? parseInt(process.env.INTERVAL) : 1000;
 
@@ -14,6 +17,20 @@ import fs from 'fs';
     port: process.env.MODBUS_PORT ? parseInt(process.env.MODBUS_PORT) : 502,
     slaveId: process.env.MODBUS_ADDRESS ? parseInt(process.env.MODBUS_ADDRESS) : 1
   };
+
+  // Configure webserver
+  if (process.env.HTTP_PORT) {
+    const HTTP_PORT = parseInt(process.env.HTTP_PORT);
+    const express = Express();
+
+    express.get('/data', (_req, res) => {
+      res.send(data);
+    });
+
+    express.listen(HTTP_PORT, () => {
+      console.log(`HTTP listening on port ${HTTP_PORT}`);
+    });
+  }
 
   // Connect to modbus
   let modbusConn: ModbusConnection;
@@ -40,7 +57,6 @@ import fs from 'fs';
   setInterval(async () => {
     if (modbusConn && modbusConn.isConnected) {
       // Get data
-      let data: SDM630Registers;
       try {
         // Retrieve vals (max 40 per trip = 80 registers)
         const registers = await modbusConn.getRegisterRanges([
